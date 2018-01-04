@@ -1,0 +1,46 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Change the hostname to our standard
+      hostname:
+        name="{{ inventory_hostname }}"
+      when:
+        ansible_fqdn != ansible_ssh_host
+
+    - name: OS is restarted as the need arises at the time of selinux modifying condition
+      shell: sleep 2 && shutdown -r now "Ansible reboot"
+      async: 1
+      poll: 0
+      changed_when: true
+    
+    - name: wait reboot
+      local_action: wait_for
+      args:
+        host: "{{ ansible_host|default(inventory_hostname) }}"
+        port: 22
+        state: started
+        search_regex: OpenSSH
+        delay: 30
+        timeout: 60
+      become: false
+
+    - name: Fix /etc/hosts removing the old hostname
+      tags:
+        - hosts
+      lineinfile:
+        state: present
+        dest: /etc/hosts
+        line: "{{ ansible_default_ipv4.address }} {{ inventory_hostname }} {{ ansible_hostname }}"
+        regexp: "^{{ ansible_default_ipv4.address }}"
+      when:
+        ansible_fqdn != inventory_hostname
+
+    - name: Validate ansible_fqdn == inventory_hostname
+      tags:
+        - validate
+      assert:
+        that:
+          ansible_fqdn == inventory_hostname
