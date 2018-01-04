@@ -34,5 +34,3 @@ After your hostnames are updated, you can also pass a parameter on the command l
 ```
 ansible-playbook -i inventory change_hostname.yaml -u username -k ssh-password
 ```
-
->>>>>>> First commit
