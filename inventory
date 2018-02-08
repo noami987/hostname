@@ -1,5 +1,5 @@
 [all]
-foo-app-01.example.com  ansible_host=192.168.215.179
+foo-app-01.example.com  ansible_host=172.16.1.2
 #foo-app-01.example.com  ansible_host=192.168.215.179 ansible_port=22 ansible_user=tetuya ansible_ssh_key_file=~/.ssh/id_rsa
 #foo-app-02.example.com  ansible_ssh_host=1.2.3.5
 #foo-app-03.example.com  ansible_ssh_host=1.2.3.6
